@@ -1,0 +1,27 @@
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { getTagsList } from '../reducers/CharactersSlice';
+
+// Fetching All Tags
+const useTagsList = () => {
+  const dispatch = useDispatch();
+  const tagsList = useSelector((state) => state.characters.tags);
+
+  useEffect(() => {
+    dispatch(getTagsList());
+  }, []);
+
+  let data = [];
+
+  if (tagsList && tagsList.length) {
+    tagsList.forEach((item) => {
+      data.push({
+        value: item.id,
+        label: item.name,
+      });
+    });
+  }
+  return data;
+};
+
+export { useTagsList };

@@ -1,0 +1,6 @@
+.dropdown_section ul {
+  display: none;
+}
+.dropdown_section:hover ul {
+  display: block;
+}
