@@ -1,6 +1,69 @@
 .dropdown_section ul {
   display: none;
 }
+
 .dropdown_section:hover ul {
   display: block;
+}
+
+
+
+.user_account_form input[type="text"],
+.user_account_form input[type="email"] {
+  background: #f9f5ff;
+  border: #eadbef 1px solid;
+}
+
+.user_account_form textarea {
+  background: #f9f5ff;
+  border: #eadbef 1px solid;
+}
+
+.user_account_form select {
+  background: #f9f5ff;
+  border: #eadbef 1px solid;
+}
+
+.user_account_form .date_box input {
+  background: #f9f5ff;
+  border: #eadbef 1px solid;
+}
+
+.user_account_form .date_box .bg-cyan-700 {
+  background: #6297f5;
+}
+
+
+
+.cancel_btn {
+  font-size: 30px;
+  line-height: 50px;
+  height: 50px;
+  background: #000000 !important;
+  color: #ffffff !important;
+  text-transform: uppercase;
+  border-radius: 0 !important;
+  margin: 0;
+  display: inline-block;
+}
+
+.cancel_btn:hover {
+  background: #6297f5 !important;
+}
+
+
+.create_btn {
+  font-size: 30px;
+  line-height: 50px;
+  height: 50px;
+  background: #F2EAFF !important;
+  color: #0753ec !important;
+  text-transform: uppercase;
+  border-radius: 0 !important;
+  margin: 0 !important;
+}
+
+.create_btn:hover {
+  background: #6297f5 !important;
+  color: #F2EAFF !important;
 }

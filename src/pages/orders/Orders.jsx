@@ -1,18 +1,24 @@
 // import { DateTime } from "luxon";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import TanstackReactTable from "../../data-table/TanstackReactTable";
 import { createColumnHelper } from "@tanstack/react-table";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchOrdersList } from "../../reducers/OrdersListSlice";
+import { FaEdit } from "react-icons/fa";
+import EditModal from "../Modal/EditModal";
 
 const Orders = () => {
-  const dispatch = useDispatch();  
+  const dispatch = useDispatch();
   const columnHelper = createColumnHelper();
 
   const { orders } = useSelector((state) => state.ordersList);
+  console.log("orders", orders)
+
+  const [openEditModal, setOpenEditModal] = useState(false);
+  const [editData, setEditData] = useState();
 
   // Compare current date and plan period end date
-  function getStatusAccessor(row){
+  function getStatusAccessor(row) {
     const planPeriodEnd = new Date(row);
     const currentDate = new Date();
     return planPeriodEnd > currentDate ? "Active" : "Inactive";
@@ -26,15 +32,15 @@ const Orders = () => {
     }),
     columnHelper.accessor("name", {
       cell: (info) => {
-        if(info.cell.row.original.user.first_name && info.cell.row.original.user.last_name) {
-          return <span>{info.cell.row.original.user.first_name+' '+info.cell.row.original.user.last_name}</span>
+        if (info.cell.row.original.user.first_name && info.cell.row.original.user.last_name) {
+          return <span>{info.cell.row.original.user.first_name + ' ' + info.cell.row.original.user.last_name}</span>
         } else {
           return '';
         }
       },
       header: "Name",
     }),
-    
+
     columnHelper.accessor("plan.name", {
       cell: (info) => <span>{info.getValue()}</span>,
       header: "Subscription Plan",
@@ -45,6 +51,19 @@ const Orders = () => {
       header: "Amount",
     }),
 
+    columnHelper.accessor("plan_period_start", {
+      cell: (info) => {
+        const date = new Date(info.getValue()).toISOString().split("T")[0];
+        return <span>{date}</span>;
+      },
+      header: "Plan Start Date",
+    }),
+
+    columnHelper.accessor("plan_period_end", {
+      cell: (info) => <span>{info.getValue()}</span>,
+      header: "Plan End Date",
+    }),
+
     columnHelper.accessor("plan_period_end", {
       cell: (info) => (
         <span>{getStatusAccessor(info.getValue())}</span>
@@ -52,7 +71,22 @@ const Orders = () => {
       header: "Status",
     }),
 
+    columnHelper.accessor("edit", {
+      cell: (info) => (
+        <button onClick={() => handleEdit(info.row.original)}>
+          <FaEdit className="text-blue-500 hover:text-blue-700" />
+        </button>
+      ),
+      header: "Edit",
+    }),
+
   ];
+
+  const handleEdit = (rowData) => {
+    console.log("Edit clicked for:", rowData);
+    setEditData(rowData);
+    setOpenEditModal(true);
+  };
 
   useEffect(() => {
     dispatch(fetchOrdersList());
@@ -64,6 +98,13 @@ const Orders = () => {
         <h1 className="text-2xl font-semibold mb-4">Orders Table</h1>
         <TanstackReactTable data={orders} columns={columns} />
       </div>
+      {openEditModal &&
+        <EditModal
+          openEditModal={openEditModal}
+          setOpenEditModal={setOpenEditModal}
+          editData={editData}
+        />
+      }
     </>
   );
 };
