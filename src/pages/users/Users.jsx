@@ -5,13 +5,13 @@ import { createColumnHelper } from '@tanstack/react-table';
 import TanstackReactTable from '../../data-table/TanstackReactTable';
 
 import {
-  deleteUser,
   fetchUsersList,
   updateUserStatus,
 } from '../../reducers/UsersListSlice';
 import ToggleButton from '../../data-table/ToggleButton';
 import { FaPlus, FaTrash } from 'react-icons/fa';
 import AddModal from '../Modal/AddModal';
+import DeleteModal from '../Modal/DeleteModal';
 
 const Users = () => {
   const columnHelper = createColumnHelper();
@@ -20,7 +20,9 @@ const Users = () => {
   const { users } = useSelector((state) => state.usersList);
 
   const [openAddModal, setOpenAddModal] = useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [addData, setAddData] = useState();
+  const [deleteData, setDeleteData] = useState();
 
   useEffect(() => {
     dispatch(fetchUsersList());
@@ -33,7 +35,8 @@ const Users = () => {
 
   const handleDelete = (rowData) => {
     console.log("rowData", rowData);
-    dispatch(deleteUser({ user_id: rowData?.id }))
+    setDeleteData(rowData);
+    setOpenDeleteModal(true);
   };
 
   const columns = [
@@ -110,6 +113,13 @@ const Users = () => {
           openAddModal={openAddModal}
           setOpenAddModal={setOpenAddModal}
           addData={addData}
+        />
+      }
+      {openDeleteModal &&
+        <DeleteModal
+          openDeleteModal={openDeleteModal}
+          setOpenDeleteModal={setOpenDeleteModal}
+          deleteData={deleteData}
         />
       }
     </>
