@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { createColumnHelper } from '@tanstack/react-table';
 
@@ -9,6 +9,8 @@ import {
   updateUserStatus,
 } from '../../reducers/UsersListSlice';
 import ToggleButton from '../../data-table/ToggleButton';
+import { FaPlus } from 'react-icons/fa';
+import AddModal from '../Modal/AddModal';
 
 const Users = () => {
   const columnHelper = createColumnHelper();
@@ -16,9 +18,17 @@ const Users = () => {
 
   const { users } = useSelector((state) => state.usersList);
 
+  const [openAddModal, setOpenAddModal] = useState(false);
+  const [addData, setAddData] = useState();
+
   useEffect(() => {
     dispatch(fetchUsersList());
   }, []);
+
+  const handleAdd = (rowData) => {
+    setAddData(rowData);
+    setOpenAddModal(true);
+  };
 
   const columns = [
     columnHelper.accessor('', {
@@ -58,6 +68,14 @@ const Users = () => {
       ),
       header: 'Status',
     }),
+    columnHelper.accessor("add", {
+      cell: (info) => (
+        <button onClick={() => handleAdd(info.row.original)}>
+          <FaPlus className="text-blue-500 hover:text-blue-700" />
+        </button>
+      ),
+      header: "Add",
+    }),
   ];
 
   return (
@@ -66,6 +84,13 @@ const Users = () => {
         <h1 className='text-2xl font-semibold mb-1'>Users Table</h1>
         <TanstackReactTable data={users} columns={columns} />
       </div>
+      {openAddModal &&
+        <AddModal
+          openAddModal={openAddModal}
+          setOpenAddModal={setOpenAddModal}
+          addData={addData}
+        />
+      }
     </>
   );
 };

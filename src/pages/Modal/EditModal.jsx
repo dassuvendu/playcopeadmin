@@ -5,9 +5,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchOrdersList, updatePlanDate } from "../../reducers/OrdersListSlice";
 
 const EditModal = ({ openEditModal, setOpenEditModal, editData }) => {
-    console.log("editData", editData)
     const dispatch = useDispatch();
-    const { loading } = useSelector((state) => state?.ordersList);
+    const { loading, message } = useSelector((state) => state?.ordersList);
 
     const formRef = useRef(null);
     const handleCreateClick = () => {
@@ -33,7 +32,6 @@ const EditModal = ({ openEditModal, setOpenEditModal, editData }) => {
     }, [editData, setValue]);
 
     const onSubmit = (data) => {
-        console.log("data", data)
         dispatch(updatePlanDate(data)).then((res) => {
             if (res?.payload?.status_code === 200) {
                 setOpenEditModal(false);
@@ -57,6 +55,11 @@ const EditModal = ({ openEditModal, setOpenEditModal, editData }) => {
                         <h2 className="text-black text-[26px] font-semibold text-center pb-4">
                             Edit End Date
                         </h2>
+                        {message && (
+                            <>
+                                <div className="text-red-700 text-center mt-2">{message}</div>
+                            </>
+                        )}
                         <div className="user_account_form py-8">
                             <form ref={formRef} onSubmit={handleSubmit(onSubmit)}>
                                 <div className="flex w-full gap-6 mb-4">

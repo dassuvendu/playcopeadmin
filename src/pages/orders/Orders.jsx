@@ -12,7 +12,6 @@ const Orders = () => {
   const columnHelper = createColumnHelper();
 
   const { orders } = useSelector((state) => state.ordersList);
-  console.log("orders", orders)
 
   const [openEditModal, setOpenEditModal] = useState(false);
   const [editData, setEditData] = useState();
@@ -83,7 +82,6 @@ const Orders = () => {
   ];
 
   const handleEdit = (rowData) => {
-    console.log("Edit clicked for:", rowData);
     setEditData(rowData);
     setOpenEditModal(true);
   };

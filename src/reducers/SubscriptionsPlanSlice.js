@@ -23,6 +23,7 @@ const subscriptionPlans = createSlice({
     error: false,
     message: null,
     monthlyPlan: null,
+    plans: [],
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -32,6 +33,7 @@ const subscriptionPlans = createSlice({
       })
       .addCase(fetchSubscriptionPlans.fulfilled, (state, { payload }) => {
         state.loading = false;
+        state.plans = payload?.data;
         state.monthlyPlan = payload?.data[0]?.price;
       })
       .addCase(fetchSubscriptionPlans.rejected, (state, { payload }) => {

@@ -35,6 +35,24 @@ export const updateUserStatus = createAsyncThunk(
   }
 );
 
+export const addUserSubscription = createAsyncThunk(
+  "addUserSubscription",
+  async (userInput, { rejectWithValue, dispatch }) => {
+    try {
+      const response = await api.post("/admin/add-user-subscription", userInput);
+      if (response?.data?.status_code === 200) {
+        const result = await response.data;
+        dispatch(fetchUsersList());
+        return result;
+      } else {
+        return rejectWithValue(response.data);
+      }
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
 
 // slicer
 const usersList = createSlice({
@@ -71,6 +89,22 @@ const usersList = createSlice({
         state.loading = false;
       })
       .addCase(updateUserStatus.rejected, (state, { payload }) => {
+        state.loading = false;
+        state.error = true;
+        state.message =
+          payload !== undefined && payload.message
+            ? payload.message
+            : "Something went wrong. Try again later.";
+      })
+
+      .addCase(addUserSubscription.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(addUserSubscription.fulfilled, (state, { payload }) => {
+        state.loading = false;
+        state.message = payload?.message;
+      })
+      .addCase(addUserSubscription.rejected, (state, { payload }) => {
         state.loading = false;
         state.error = true;
         state.message =
