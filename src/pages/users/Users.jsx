@@ -5,11 +5,12 @@ import { createColumnHelper } from '@tanstack/react-table';
 import TanstackReactTable from '../../data-table/TanstackReactTable';
 
 import {
+  deleteUser,
   fetchUsersList,
   updateUserStatus,
 } from '../../reducers/UsersListSlice';
 import ToggleButton from '../../data-table/ToggleButton';
-import { FaPlus } from 'react-icons/fa';
+import { FaPlus, FaTrash } from 'react-icons/fa';
 import AddModal from '../Modal/AddModal';
 
 const Users = () => {
@@ -28,6 +29,11 @@ const Users = () => {
   const handleAdd = (rowData) => {
     setAddData(rowData);
     setOpenAddModal(true);
+  };
+
+  const handleDelete = (rowData) => {
+    console.log("rowData", rowData);
+    dispatch(deleteUser({ user_id: rowData?.id }))
   };
 
   const columns = [
@@ -52,6 +58,13 @@ const Users = () => {
       cell: (info) => <span>{info.getValue()}</span>,
       header: 'Contact Number',
     }),
+    columnHelper.accessor("created_date", {
+      cell: (info) => {
+        const date = new Date(info.getValue()).toISOString().split("T")[0];
+        return <span>{date}</span>;
+      },
+      header: "Created Date",
+    }),
     columnHelper.accessor('status', {
       cell: (info) => (
         <ToggleButton
@@ -75,6 +88,14 @@ const Users = () => {
         </button>
       ),
       header: "Add",
+    }),
+    columnHelper.accessor("delete", {
+      cell: (info) => (
+        <button onClick={() => handleDelete(info.row.original)}>
+          <FaTrash className="text-red-500 hover:text-red-700" />
+        </button>
+      ),
+      header: "Delete",
     }),
   ];
 

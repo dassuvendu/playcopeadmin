@@ -2,9 +2,10 @@ import { Button, Label, Modal, TextInput } from "flowbite-react";
 import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchOrdersList, updatePlanDate } from "../../reducers/OrdersListSlice";
+import { clearMessage, fetchOrdersList, updatePlanDate } from "../../reducers/OrdersListSlice";
 
 const EditModal = ({ openEditModal, setOpenEditModal, editData }) => {
+    console.log("editData", editData)
     const dispatch = useDispatch();
     const { loading, message } = useSelector((state) => state?.ordersList);
 
@@ -27,6 +28,7 @@ const EditModal = ({ openEditModal, setOpenEditModal, editData }) => {
     useEffect(() => {
         if (editData) {
             setValue("user_subscription_id", editData?.user_subscription_id);
+            setValue("user_name", (editData?.user?.first_name ? editData?.user?.first_name : " ") + " " + (editData?.user?.last_name ? editData?.user?.last_name : ""));
             setValue("end_date", editData?.plan_period_end);
         }
     }, [editData, setValue]);
@@ -39,6 +41,10 @@ const EditModal = ({ openEditModal, setOpenEditModal, editData }) => {
             }
         })
     };
+
+    useEffect(() => {
+        dispatch(clearMessage());
+    }, [dispatch]);
 
     return (
         <>
@@ -63,7 +69,7 @@ const EditModal = ({ openEditModal, setOpenEditModal, editData }) => {
                         <div className="user_account_form py-8">
                             <form ref={formRef} onSubmit={handleSubmit(onSubmit)}>
                                 <div className="flex w-full gap-6 mb-4">
-                                    <div className="w-6/12">
+                                    <div className="w-6/12 hidden">
                                         <div className="mb-2 block">
                                             <Label
                                                 value="User Id"
@@ -75,6 +81,20 @@ const EditModal = ({ openEditModal, setOpenEditModal, editData }) => {
                                             required
                                             disabled
                                             {...register("user_subscription_id", { required: true })}
+                                        />
+                                    </div>
+                                    <div className="w-6/12">
+                                        <div className="mb-2 block">
+                                            <Label
+                                                value="User Name"
+                                                className="text-[#575353] text-base"
+                                            />
+                                        </div>
+                                        <TextInput
+                                            type="text"
+                                            required
+                                            disabled
+                                            {...register("user_name", { required: true })}
                                         />
                                     </div>
                                     <div className="w-6/12">

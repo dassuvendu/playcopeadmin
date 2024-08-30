@@ -3,9 +3,10 @@ import { useEffect, useRef } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchSubscriptionPlans } from "../../reducers/SubscriptionsPlanSlice";
-import { addUserSubscription } from "../../reducers/UsersListSlice";
+import { addUserSubscription, clearMessage } from "../../reducers/UsersListSlice";
 
 const AddModal = ({ openAddModal, setOpenAddModal, addData }) => {
+    console.log("addData", addData)
     const dispatch = useDispatch();
     const { loading, message } = useSelector((state) => state?.usersList);
     const { plans } = useSelector((state) => state.plans);
@@ -31,6 +32,7 @@ const AddModal = ({ openAddModal, setOpenAddModal, addData }) => {
         if (addData) {
             setValue("email", addData?.email);
             setValue("user_id", addData?.id);
+            setValue("user_name", (addData?.first_name ? addData?.first_name : " ") + " " + (addData?.last_name ? addData?.last_name : " "));
         }
     }, [addData, setValue]);
 
@@ -40,7 +42,7 @@ const AddModal = ({ openAddModal, setOpenAddModal, addData }) => {
             plan_id: parseInt(data?.plan_id, 10),
         }
         dispatch(addUserSubscription(formattedData)).then((res) => {
-            if (res?.payload?.status_code === 200) {
+            if (res?.payload?.status_code === 201) {
                 setOpenAddModal(false);
             }
         })
@@ -48,6 +50,10 @@ const AddModal = ({ openAddModal, setOpenAddModal, addData }) => {
 
     useEffect(() => {
         dispatch(fetchSubscriptionPlans());
+    }, [dispatch]);
+
+    useEffect(() => {
+        dispatch(clearMessage());
     }, [dispatch]);
 
     return (
@@ -94,7 +100,7 @@ const AddModal = ({ openAddModal, setOpenAddModal, addData }) => {
                                             })}
                                         />
                                     </div>
-                                    <div className="w-6/12">
+                                    <div className="w-6/12 hidden">
                                         <div className="mb-2 block">
                                             <Label
                                                 value="User Id"
@@ -106,6 +112,20 @@ const AddModal = ({ openAddModal, setOpenAddModal, addData }) => {
                                             required
                                             disabled
                                             {...register("user_id", { required: true })}
+                                        />
+                                    </div>
+                                    <div className="w-6/12">
+                                        <div className="mb-2 block">
+                                            <Label
+                                                value="User Name"
+                                                className="text-[#575353] text-base"
+                                            />
+                                        </div>
+                                        <TextInput
+                                            type="text"
+                                            required
+                                            disabled
+                                            {...register("user_name", { required: true })}
                                         />
                                     </div>
                                     <div className="w-6/12">
@@ -202,7 +222,7 @@ const AddModal = ({ openAddModal, setOpenAddModal, addData }) => {
                         className="w-6/12 create_btn"
                         onClick={handleCreateClick}
                     >
-                        {loading ? "Wait..." : "Edit"}
+                        {loading ? "Wait..." : "Add"}
                     </Button>
                 </Modal.Footer>
             </Modal>

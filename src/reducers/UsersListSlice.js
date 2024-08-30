@@ -53,6 +53,24 @@ export const addUserSubscription = createAsyncThunk(
   }
 );
 
+export const deleteUser = createAsyncThunk(
+  "deleteUser",
+  async (userInput, { rejectWithValue, dispatch }) => {
+    try {
+      const response = await api.post("/admin/delete-user", userInput);
+      if (response?.data?.status_code === 200) {
+        const result = await response.data;
+        dispatch(fetchUsersList());
+        return result;
+      } else {
+        return rejectWithValue(response.data);
+      }
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
 
 // slicer
 const usersList = createSlice({
@@ -64,7 +82,11 @@ const usersList = createSlice({
     users: [],
     isActive: false,
   },
-  reducers: {},
+  reducers: {
+    clearMessage: (state) => {
+      state.message = null
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchUsersList.pending, (state) => {
@@ -111,8 +133,26 @@ const usersList = createSlice({
           payload !== undefined && payload.message
             ? payload.message
             : "Something went wrong. Try again later.";
+      })
+
+      .addCase(deleteUser.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(deleteUser.fulfilled, (state, { payload }) => {
+        state.loading = false;
+        state.message = payload?.message;
+      })
+      .addCase(deleteUser.rejected, (state, { payload }) => {
+        state.loading = false;
+        state.error = true;
+        state.message =
+          payload !== undefined && payload.message
+            ? payload.message
+            : "Something went wrong. Try again later.";
       });
   },
 });
+
+export const { clearMessage } = usersList.actions;
 
 export default usersList.reducer;
